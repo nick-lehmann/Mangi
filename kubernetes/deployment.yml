@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: mangi
+
+spec:
+
+  selector:
+    matchLabels:
+      app: mangi
+
+  replicas: 1
+
+  template:
+    metadata:
+      labels:
+        app: mangi
+    spec:
+      containers:
+        - name: mangi
+          image: nicklehmann/mangi
+          imagePullPolicy: Always
+          env:
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: mangi
+                  key: BOT_TOKEN

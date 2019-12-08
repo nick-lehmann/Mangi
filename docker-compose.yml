@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  bot:
+    image: nicklehmann/mangi:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    env_file:
+      - bot.env
+
+    volumes:
+      - .:/opt/project
+
+    command: "python mangi/bot.py"
