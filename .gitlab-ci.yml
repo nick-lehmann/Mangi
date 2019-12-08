@@ -23,4 +23,4 @@ deploy:
   stage: Deploy
   script:
     - kubectl --namespace mangi delete deployment mangi || true
-    - kubectl --namespace create -f kubernetes/deployment.yml
+    - kubectl --namespace mangi create -f kubernetes/deployment.yml
