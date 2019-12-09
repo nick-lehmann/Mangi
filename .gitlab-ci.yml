@@ -22,5 +22,7 @@ deploy:
   image: bitnami/kubectl
   stage: Deploy
   script:
-    - kubectl --namespace mangi delete deployment mangi || true
-    - kubectl --namespace mangi create -f kubernetes/deployment.yml
+    - env
+    - kubectl create ns $KUBE_NAMESPACE || true
+    - kubectl --namespace $KUBE_NAMESPACE delete deployment mangi || true
+    - kubectl --namespace $KUBE_NAMESPACE create -f kubernetes/deployment.yml
