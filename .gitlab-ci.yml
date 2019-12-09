@@ -25,4 +25,5 @@ deploy:
     - env
     - kubectl create ns $KUBE_NAMESPACE || true
     - kubectl --namespace $KUBE_NAMESPACE delete deployment mangi || true
-    - kubectl --namespace $KUBE_NAMESPACE create -f kubernetes/deployment.yml
+    - kubectl create --help
+    - kubectl --namespace $KUBE_NAMESPACE create --filename=kubernetes/deployment.yml
