@@ -1,4 +1,4 @@
-FROM nicklehmann/poetry:3.8-alpine3.10
+FROM nicklehmann/poetry:py3.8-latest-alpine
 
 RUN apk add build-base libffi-dev openssl-dev
 
