@@ -55,18 +55,9 @@ jobs:
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
       
-      - name: Kubernetes set context
-        uses: Azure/k8s-set-context@v1
+      - name: Trigger deploy
+        uses: Consensys/kubernetes-action@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
         with:
-          method: kubeconfig
-          kubeconfig: KUBECONFIG
-
-      
-      - name: Deploy to Kubernetes cluster
-        uses: Azure/k8s-deploy@v1.3
-        with:
-          namespace: mangi
-          manifests: |
-            kubernetes/deployment.yml
-          images: docker.pkg.github.com/nick-lehmann/mangi/bot:latest
-          kubectl-version: 'latest'
+          args: apply -n mangi -f manifests/deployment.yaml
