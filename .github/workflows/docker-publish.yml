@@ -60,4 +60,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
         with:
-          args: apply -n mangi -f kubernetes/deployment.yaml
+          args: apply -n mangi -f kubernetes/deployment.yml
