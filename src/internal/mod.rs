@@ -1,2 +1,2 @@
-pub mod meals;
+pub mod mensa;
 pub mod users;

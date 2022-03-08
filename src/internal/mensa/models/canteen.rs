@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::Url;
 
-pub type CanteenID = u32;
+pub type CanteenID = i32;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Canteen {
@@ -11,8 +11,9 @@ pub struct Canteen {
     pub city: String,
     pub address: String,
     // pub coordinates: Coordinates,
-    pub url: Url,
-    pub menu: Url,
+    pub url: Option<Url>,
+    pub menu: Option<Url>,
+    pub mensa: i32,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

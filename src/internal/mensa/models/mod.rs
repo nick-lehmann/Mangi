@@ -1,6 +1,7 @@
-pub mod canteen;
-pub mod meal;
-pub mod offer;
+mod canteen;
+pub use canteen::{Canteen, CanteenDay, CanteenID};
+mod meal;
+pub use meal::{Meal, MealID, MealPrices};
 
 pub type Url = String;
 

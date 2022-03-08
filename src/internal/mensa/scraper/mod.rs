@@ -1,10 +1,7 @@
 use chrono::NaiveDate;
 use ureq::Error;
 
-use super::models::{
-    canteen::{Canteen, CanteenDay, CanteenID},
-    meal::Meal,
-};
+use super::models;
 
 pub enum OpenMensa {
     TUDresden,
@@ -31,28 +28,32 @@ impl OpenMensaClient {
         }
     }
 
-    pub fn get_canteens(&self) -> ClientResult<Vec<Canteen>> {
+    pub fn get_canteens(&self) -> ClientResult<Vec<models::Canteen>> {
         let endpoint = format!("{}/canteens", self.base_url);
         let body = ureq::get(&endpoint).call()?.into_string().unwrap();
 
         Ok(serde_json::from_str(&body).unwrap())
     }
 
-    pub fn get_canteen(&self, canteen_id: CanteenID) -> ClientResult<Canteen> {
+    pub fn get_canteen(&self, canteen_id: models::CanteenID) -> ClientResult<models::Canteen> {
         let endpoint = format!("{}/canteens/{}", self.base_url, canteen_id);
         let body = ureq::get(&endpoint).call()?.into_string().unwrap();
 
         Ok(serde_json::from_str(&body).unwrap())
     }
 
-    pub fn get_days(&self, canteen_id: CanteenID) -> ClientResult<Vec<CanteenDay>> {
+    pub fn get_days(&self, canteen_id: models::CanteenID) -> ClientResult<Vec<models::CanteenDay>> {
         let endpoint = format!("{}/canteens/{}/days", self.base_url, canteen_id);
         let body = ureq::get(&endpoint).call()?.into_string().unwrap();
 
         Ok(serde_json::from_str(&body).unwrap())
     }
 
-    pub fn get_meals(self, canteen_id: CanteenID, day: NaiveDate) -> ClientResult<Vec<Meal>> {
+    pub fn get_meals(
+        self,
+        canteen_id: models::CanteenID,
+        day: NaiveDate,
+    ) -> ClientResult<Vec<models::Meal>> {
         let canteen_day = day.format("%Y-%m-%d");
 
         let endpoint = format!(
@@ -62,7 +63,7 @@ impl OpenMensaClient {
         let body = ureq::get(&endpoint).call()?.into_string().unwrap();
         let jd = &mut serde_json::Deserializer::from_str(&body);
 
-        let result: Result<Vec<Meal>, _> = serde_path_to_error::deserialize(jd);
+        let result: Result<Vec<models::Meal>, _> = serde_path_to_error::deserialize(jd);
 
         match result {
             Ok(x) => Ok(x),

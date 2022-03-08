@@ -1,9 +1,10 @@
+use chrono::NaiveDate;
 use serde::{self, Deserialize, Serialize};
 
-use super::Url;
+use super::{CanteenID, Url};
 extern crate serde_derive;
 
-type MealID = u32;
+pub type MealID = i32;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Meal {
@@ -14,6 +15,8 @@ pub struct Meal {
     pub category: String,
     pub image: Url,
     pub url: Url,
+    pub day: NaiveDate,
+    pub canteen: CanteenID,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

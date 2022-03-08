@@ -1,10 +1,11 @@
+#[macro_use]
+extern crate diesel;
 extern crate serde;
 use chrono::NaiveDate;
-use internal::meals::scraper::{OpenMensa, OpenMensaClient};
+use internal::mensa::scraper::{OpenMensa, OpenMensaClient};
 
 pub mod api;
 pub mod internal;
-pub mod parser;
 extern crate select;
 
 pub fn main() {
