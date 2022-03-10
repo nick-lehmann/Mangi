@@ -32,7 +32,7 @@ impl TryFrom<Meal> for models::Meal {
             .map(|item| item.to_string())
             .collect();
 
-        return Ok(Self {
+        Ok(Self {
             id: meal.id,
             name: meal.name,
             prices: models::MealPrices {
@@ -43,9 +43,9 @@ impl TryFrom<Meal> for models::Meal {
             category: meal.category.unwrap_or_default(),
             image: meal.image.unwrap_or_default(),
             url: meal.url.unwrap_or_default(),
-            day: meal.day,
-            canteen: meal.canteen,
-        });
+            // day: meal.day,
+            // canteen: meal.canteen,
+        })
     }
 }
 
@@ -57,11 +57,13 @@ impl From<models::Meal> for Meal {
             category: Some(meal.category),
             price_student: meal.prices.student,
             price_employee: meal.prices.employee,
-            notes: Some(meal.notes.join(",").to_string()),
+            notes: Some(meal.notes.join(",")),
             image: Some(meal.image),
             url: Some(meal.url),
-            day: meal.day,
-            canteen: meal.canteen,
+            day: NaiveDate::from_ymd(1999, 1, 1),
+            canteen: 0
+            // day: meal.day,
+            // canteen: meal.canteen,
         }
     }
 }

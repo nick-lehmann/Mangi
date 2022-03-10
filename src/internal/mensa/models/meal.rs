@@ -15,8 +15,8 @@ pub struct Meal {
     pub category: String,
     pub image: Url,
     pub url: Url,
-    pub day: NaiveDate,
-    pub canteen: CanteenID,
+    // pub day: NaiveDate,
+    // pub canteen: CanteenID,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

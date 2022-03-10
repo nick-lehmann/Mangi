@@ -22,4 +22,5 @@ serde_derive = "1.0.136"
 serde_path_to_error = "0.1.7"
 diesel = { version = "1.4.8", features = ["postgres", "r2d2", "chrono"] }
 r2d2 = "0.8.9"
+log = "0.4.14"
 

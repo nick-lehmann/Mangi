@@ -50,7 +50,7 @@ impl OpenMensaClient {
     }
 
     pub fn get_meals(
-        self,
+        &self,
         canteen_id: models::CanteenID,
         day: NaiveDate,
     ) -> ClientResult<Vec<models::Meal>> {

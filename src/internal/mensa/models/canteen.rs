@@ -13,7 +13,7 @@ pub struct Canteen {
     // pub coordinates: Coordinates,
     pub url: Option<Url>,
     pub menu: Option<Url>,
-    pub mensa: i32,
+    // pub mensa: i32,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

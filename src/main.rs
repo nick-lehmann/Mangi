@@ -1,7 +1,10 @@
+#![allow(unused_imports)]
 #[macro_use]
 extern crate diesel;
 extern crate serde;
-use chrono::NaiveDate;
+use std::env;
+
+use api::telegram::start_telegram_bot;
 use internal::mensa::scraper::{OpenMensa, OpenMensaClient};
 
 pub mod api;
@@ -12,10 +15,9 @@ pub fn main() {
     env_logger::init();
     dotenv::dotenv().unwrap();
 
-    let open_mensa_client = OpenMensaClient::new(OpenMensa::TUDresden);
-    let canteens = open_mensa_client.get_canteens().unwrap();
-    println!("{:#?}", canteens);
+    let token = env::var("BOT_TOKEN").expect("Need to set 'BOT_TOKEN' environment variable");
 
-    let meals = open_mensa_client.get_meals(4, NaiveDate::from_ymd(2022, 3, 4));
-    println!("{:#?}", meals);
+    let open_mensa_client = OpenMensaClient::new(OpenMensa::TUDresden);
+
+    start_telegram_bot(token, &open_mensa_client);
 }

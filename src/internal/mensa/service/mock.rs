@@ -9,10 +9,10 @@ pub struct MockMealService {
 
 impl MealService for MockMealService {
     fn get_canteens(&self) -> super::ServiceResult<Vec<models::Canteen>> {
-        return Ok(self.canteens.clone());
+        Ok(self.canteens.clone())
     }
 
     fn get_meals(&self, _date: chrono::NaiveDate) -> super::ServiceResult<Vec<models::Meal>> {
-        return Ok(self.meals.clone());
+        Ok(self.meals.clone())
     }
 }

@@ -43,7 +43,7 @@ impl MensaStorage for MensaPostgresStorage {
             .values(&input)
             .get_result(&connection)?;
 
-        return Ok(canteen.into());
+        Ok(canteen.into())
     }
 
     fn list_meals(
@@ -66,6 +66,6 @@ impl MensaStorage for MensaPostgresStorage {
             .values(&input)
             .get_result(&connection)?;
 
-        return Ok(canteen.try_into()?);
+        canteen.try_into()
     }
 }

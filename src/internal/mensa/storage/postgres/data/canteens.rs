@@ -15,15 +15,15 @@ pub struct Canteen {
 
 impl From<Canteen> for models::Canteen {
     fn from(canteen: Canteen) -> Self {
-        return Self {
+        Self {
             id: canteen.id,
             name: canteen.name,
             city: canteen.city,
             address: canteen.address,
             url: canteen.url,
             menu: canteen.menu,
-            mensa: canteen.mensa,
-        };
+            // mensa: canteen.mensa,
+        }
     }
 }
 
@@ -36,7 +36,7 @@ impl From<models::Canteen> for Canteen {
             address: canteen.address,
             url: canteen.url,
             menu: canteen.menu,
-            mensa: canteen.mensa,
+            mensa: 0,
         }
     }
 }

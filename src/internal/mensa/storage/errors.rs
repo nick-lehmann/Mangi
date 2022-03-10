@@ -8,7 +8,7 @@ pub enum StorageError {
 }
 
 impl From<ParseFloatError> for StorageError {
-    fn from(error: ParseFloatError) -> Self {
+    fn from(_error: ParseFloatError) -> Self {
         return StorageError::ParseError;
     }
 }
