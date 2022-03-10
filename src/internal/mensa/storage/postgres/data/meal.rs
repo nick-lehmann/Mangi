@@ -39,7 +39,7 @@ impl TryFrom<Meal> for models::Meal {
                 student: meal.price_student,
                 employee: meal.price_employee,
             },
-            notes: notes,
+            notes,
             category: meal.category.unwrap_or_default(),
             image: meal.image.unwrap_or_default(),
             url: meal.url.unwrap_or_default(),

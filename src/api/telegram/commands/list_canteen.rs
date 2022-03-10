@@ -43,11 +43,11 @@ impl<'a> ListMensaCommand<'a> {
 
 impl<'a> TelegramCommand for ListMensaCommand<'a> {
     fn name(&self) -> &'static str {
-        return "list";
+        "list"
     }
 
     fn description(&self) -> &'static str {
-        return "List all canteens";
+        "List all canteens"
     }
 
     fn execute(&self, update: Update) {

@@ -16,11 +16,11 @@ impl<'a> ListUserSettingsCommand<'a> {
 
 impl<'a> TelegramCommand for ListUserSettingsCommand<'a> {
     fn name(&self) -> &'static str {
-        return "settings";
+        "settings"
     }
 
     fn description(&self) -> &'static str {
-        return "Show user settings";
+        "Show user settings"
     }
 
     fn execute(&self, update: Update) {

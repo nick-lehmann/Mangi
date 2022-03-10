@@ -104,7 +104,7 @@ impl<'a> TelegramBot<'a> {
     }
 }
 
-fn get_bot_commands(commands: &Vec<&dyn TelegramCommand>) -> Vec<frankenstein::BotCommand> {
+fn get_bot_commands(commands: &[&dyn TelegramCommand]) -> Vec<frankenstein::BotCommand> {
     commands
         .iter()
         .map(|command| frankenstein::BotCommand {
