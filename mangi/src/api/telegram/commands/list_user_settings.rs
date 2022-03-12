@@ -1,3 +1,8 @@
+use std::fmt::Error;
+
+use crate::api::telegram::TelegramError;
+use crate::api::telegram::TelegramResult;
+
 use super::TelegramCommand;
 use frankenstein::Api;
 use frankenstein::SendMessageParamsBuilder;
@@ -23,7 +28,7 @@ impl<'a> TelegramCommand for ListUserSettingsCommand<'a> {
         "Show user settings"
     }
 
-    fn execute(&self, update: Update) {
+    fn execute(&self, update: Update) -> TelegramResult<()> {
         let message = update.message.unwrap();
 
         let from = message.from.unwrap();
@@ -31,15 +36,14 @@ impl<'a> TelegramCommand for ListUserSettingsCommand<'a> {
         let send_message_params = SendMessageParamsBuilder::default()
             .chat_id(message.chat.id)
             .text(format!("Hello {}, your preferences are:", from.first_name))
-            .build()
-            .unwrap();
+            .build()?;
 
-        if let Err(err) = self.api.send_message(&send_message_params) {
-            println!("Failed to send message: {:?}", err);
-        }
+        self.api.send_message(&send_message_params)?;
+
+        Ok(())
     }
 
-    fn handle_callback(&self, _callback_query: &Update) -> Option<()> {
-        None
+    fn handle_callback(&self, _callback_query: &Update) -> TelegramResult<()> {
+        Err(TelegramError::NothingDone)
     }
 }

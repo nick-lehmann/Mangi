@@ -1,8 +1,11 @@
-use crate::internal::mensa::scraper::OpenMensaClient;
+use crate::api::telegram::TelegramError;
+use crate::api::telegram::TelegramResult;
 
 use super::TelegramCommand;
 use chrono::NaiveDate;
 use frankenstein::Api;
+use frankenstein::EditMessageTextParams;
+use frankenstein::EditMessageTextParamsBuilder;
 use frankenstein::InlineKeyboardButton;
 use frankenstein::InlineKeyboardButtonBuilder;
 use frankenstein::InlineKeyboardMarkup;
@@ -12,13 +15,14 @@ use frankenstein::SendMessageParamsBuilder;
 use frankenstein::TelegramApi;
 use frankenstein::Update;
 use log::error;
+use open_mensa::OpenMensaClient;
 
-pub struct ListMensaCommand<'a> {
+pub struct FoodCommand<'a> {
     api: &'a Api,
     open_mensa_client: &'a OpenMensaClient,
 }
 
-impl<'a> ListMensaCommand<'a> {
+impl<'a> FoodCommand<'a> {
     pub fn new(api: &'a frankenstein::Api, open_mensa_client: &'a OpenMensaClient) -> Self {
         Self {
             api,
@@ -41,7 +45,7 @@ impl<'a> ListMensaCommand<'a> {
     }
 }
 
-impl<'a> TelegramCommand for ListMensaCommand<'a> {
+impl<'a> TelegramCommand for FoodCommand<'a> {
     fn name(&self) -> &'static str {
         "list"
     }
@@ -50,7 +54,7 @@ impl<'a> TelegramCommand for ListMensaCommand<'a> {
         "List all canteens"
     }
 
-    fn execute(&self, update: Update) {
+    fn execute(&self, update: Update) -> TelegramResult<()> {
         let message = update.message.unwrap();
 
         let inline_keyboard = ReplyMarkup::InlineKeyboardMarkup(InlineKeyboardMarkup {
@@ -61,15 +65,14 @@ impl<'a> TelegramCommand for ListMensaCommand<'a> {
             .chat_id(message.chat.id)
             .text("Hier sind deine Mensen")
             .reply_markup(inline_keyboard)
-            .build()
-            .unwrap();
+            .build()?;
 
-        if let Err(err) = self.api.send_message(&send_message_params) {
-            error!("Failed to send message: {:?}", err);
-        }
+        self.api.send_message(&send_message_params)?;
+
+        Ok(())
     }
 
-    fn handle_callback(&self, update: &Update) -> Option<()> {
+    fn handle_callback(&self, update: &Update) -> TelegramResult<()> {
         let callback_query = update.callback_query.as_ref().unwrap();
         let data = callback_query.data.as_ref().unwrap();
 
@@ -78,26 +81,29 @@ impl<'a> TelegramCommand for ListMensaCommand<'a> {
             .get_meals(data.parse().unwrap(), NaiveDate::from_ymd(2022, 3, 10))
             .unwrap();
 
-        let message: &Message = match callback_query.message.as_ref() {
-            Some(text) => text,
-            None => {
-                println!("Fail. Update is {:#?}", update);
-                return None;
-            }
-        };
+        let message = callback_query
+            .message
+            .as_ref()
+            .ok_or(TelegramError::ValueError("No callback given".into()))?;
+
+        let edit_message_params = EditMessageTextParamsBuilder::default()
+            .chat_id(message.chat.id)
+            .message_id(message.message_id)
+            .text("Hier sind deine Gerichte")
+            .build()
+            .unwrap();
+
+        self.api.edit_message_text(&edit_message_params)?;
 
         for meal in meals {
             let send_message_params = SendMessageParamsBuilder::default()
                 .chat_id(message.chat.id)
                 .text(meal.name)
-                .build()
-                .unwrap();
+                .build()?;
 
-            if let Err(err) = self.api.send_message(&send_message_params) {
-                println!("Failed to send message: {:?}", err);
-            }
+            self.api.send_message(&send_message_params)?;
         }
 
-        Some(())
+        Ok(())
     }
 }

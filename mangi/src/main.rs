@@ -5,7 +5,7 @@ extern crate serde;
 use std::env;
 
 use api::telegram::start_telegram_bot;
-use internal::mensa::scraper::{OpenMensa, OpenMensaClient};
+use open_mensa::{OpenMensaClient, mensas::OpenMensa};
 
 pub mod api;
 pub mod internal;

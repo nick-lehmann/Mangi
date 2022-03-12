@@ -1,19 +1,8 @@
+pub mod mensas;
+pub mod models;
+
 use chrono::NaiveDate;
 use ureq::Error;
-
-use super::models;
-
-pub enum OpenMensa {
-    TUDresden,
-}
-
-impl OpenMensa {
-    fn as_str(&self) -> &'static str {
-        match self {
-            OpenMensa::TUDresden => "https://api.studentenwerk-dresden.de/openmensa/v2",
-        }
-    }
-}
 
 pub type ClientResult<T> = Result<T, Error>;
 
@@ -22,7 +11,7 @@ pub struct OpenMensaClient {
 }
 
 impl OpenMensaClient {
-    pub fn new(mensa: OpenMensa) -> Self {
+    pub fn new(mensa: mensas::OpenMensa) -> Self {
         OpenMensaClient {
             base_url: mensa.as_str().to_owned(),
         }

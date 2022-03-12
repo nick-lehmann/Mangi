@@ -1,3 +1,8 @@
+pub mod commands;
+mod errors;
+
+pub use errors::{TelegramError, TelegramResult};
+
 use std::time::Duration;
 
 use frankenstein::Api;
@@ -9,16 +14,15 @@ use frankenstein::SetMyCommandsParams;
 use frankenstein::SetMyCommandsParamsBuilder;
 use frankenstein::TelegramApi;
 
-use commands::{ListMensaCommand, ListUserSettingsCommand};
+use commands::{FoodCommand, ListUserSettingsCommand};
 use frankenstein::Update;
 use log::debug;
 use log::error;
-
-use crate::internal::mensa::scraper::OpenMensaClient;
+use open_mensa::OpenMensaClient;
 
 use self::commands::TelegramCommand;
 
-pub mod commands;
+use frankenstein::api::Error;
 
 pub struct TelegramBot<'a> {
     api: &'a Api,
@@ -68,7 +72,7 @@ impl<'a> TelegramBot<'a> {
             debug!("Trying to handle callback with command {}", command.name());
             let handled = command.handle_callback(&update);
             debug!("Command {} did not handle callback", command.name());
-            if handled.is_some() {
+            if handled.is_ok() {
                 return;
             }
         }
@@ -116,7 +120,7 @@ fn get_bot_commands(commands: &[&dyn TelegramCommand]) -> Vec<frankenstein::BotC
 
 pub fn start_telegram_bot(token: String, open_mensa_client: &OpenMensaClient) {
     let api = Api::new(&token);
-    let list_mensa_command = ListMensaCommand::new(&api, open_mensa_client);
+    let list_mensa_command = FoodCommand::new(&api, open_mensa_client);
     let list_user_settings_command = ListUserSettingsCommand::new(&api);
 
     let commands: Vec<&dyn TelegramCommand> =

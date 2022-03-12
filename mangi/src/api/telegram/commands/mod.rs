@@ -1,16 +1,18 @@
-pub mod list_canteen;
+pub mod food;
 pub mod list_user_settings;
 
-pub use list_canteen::ListMensaCommand;
+pub use food::FoodCommand;
 pub use list_user_settings::ListUserSettingsCommand;
 
 use frankenstein::{CallbackQuery, Update};
 
+use super::TelegramResult;
+
 pub trait TelegramCommand {
     fn name(&self) -> &'static str;
     fn description(&self) -> &'static str;
-    fn execute(&self, update: Update);
-    fn handle_callback(&self, update: &Update) -> Option<()>;
+    fn execute(&self, update: Update) -> TelegramResult<()>;
+    fn handle_callback(&self, update: &Update) -> TelegramResult<()>;
 }
 
 pub enum CommandError {
