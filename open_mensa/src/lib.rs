@@ -1,5 +1,8 @@
-pub mod mensas;
-pub mod models;
+mod mensas;
+mod models;
+
+pub use mensas::OpenMensaEndpoint;
+pub use models::{Canteen, CanteenDay, CanteenID, Meal, MealID, MealPrices};
 
 use chrono::NaiveDate;
 use ureq::Error;
@@ -11,7 +14,7 @@ pub struct OpenMensaClient {
 }
 
 impl OpenMensaClient {
-    pub fn new(mensa: mensas::OpenMensa) -> Self {
+    pub fn new(mensa: mensas::OpenMensaEndpoint) -> Self {
         OpenMensaClient {
             base_url: mensa.as_str().to_owned(),
         }

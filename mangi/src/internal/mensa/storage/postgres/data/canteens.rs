@@ -1,10 +1,12 @@
+use open_mensa::CanteenID;
+
 use super::super::schema::canteens;
 use crate::internal::mensa::models::{self, Url};
 
-#[derive(Queryable, Insertable)]
+#[derive(Queryable, Insertable, Debug)]
 #[table_name = "canteens"]
 pub struct Canteen {
-    pub id: models::CanteenID,
+    pub id: CanteenID,
     pub name: String,
     pub city: String,
     pub address: String,
@@ -22,7 +24,7 @@ impl From<Canteen> for models::Canteen {
             address: canteen.address,
             url: canteen.url,
             menu: canteen.menu,
-            // mensa: canteen.mensa,
+            mensa: canteen.mensa,
         }
     }
 }
@@ -36,7 +38,7 @@ impl From<models::Canteen> for Canteen {
             address: canteen.address,
             url: canteen.url,
             menu: canteen.menu,
-            mensa: 0,
+            mensa: canteen.mensa,
         }
     }
 }

@@ -1,4 +1,5 @@
 use chrono::NaiveDate;
+use open_mensa::{CanteenID, MealID};
 
 use super::super::schema::meals;
 use crate::internal::mensa::models;
@@ -6,10 +7,10 @@ use crate::internal::mensa::storage::StorageError;
 
 type CommaSeparatedList = String;
 
-#[derive(Queryable, Insertable)]
+#[derive(Queryable, Insertable, Debug)]
 #[table_name = "meals"]
 pub struct Meal {
-    pub id: models::MealID,
+    pub id: MealID,
     pub name: String,
     pub category: Option<String>,
     pub price_student: f32,
@@ -18,7 +19,7 @@ pub struct Meal {
     pub image: Option<String>,
     pub url: Option<String>,
     pub day: NaiveDate,
-    pub canteen: models::CanteenID,
+    pub canteen: CanteenID,
 }
 
 impl TryFrom<Meal> for models::Meal {
@@ -43,8 +44,8 @@ impl TryFrom<Meal> for models::Meal {
             category: meal.category.unwrap_or_default(),
             image: meal.image.unwrap_or_default(),
             url: meal.url.unwrap_or_default(),
-            // day: meal.day,
-            // canteen: meal.canteen,
+            day: meal.day,
+            canteen: meal.canteen,
         })
     }
 }
@@ -60,10 +61,8 @@ impl From<models::Meal> for Meal {
             notes: Some(meal.notes.join(",")),
             image: Some(meal.image),
             url: Some(meal.url),
-            day: NaiveDate::from_ymd(1999, 1, 1),
-            canteen: 0
-            // day: meal.day,
-            // canteen: meal.canteen,
+            day: meal.day,
+            canteen: meal.canteen,
         }
     }
 }

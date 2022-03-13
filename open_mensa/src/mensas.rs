@@ -1,11 +1,11 @@
-pub enum OpenMensa {
+pub enum OpenMensaEndpoint {
     TUDresden,
 }
 
-impl OpenMensa {
+impl OpenMensaEndpoint {
     pub fn as_str(&self) -> &'static str {
         match self {
-            OpenMensa::TUDresden => "https://api.studentenwerk-dresden.de/openmensa/v2",
+            OpenMensaEndpoint::TUDresden => "https://api.studentenwerk-dresden.de/openmensa/v2",
         }
     }
 }

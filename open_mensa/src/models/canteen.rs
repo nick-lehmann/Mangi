@@ -4,7 +4,7 @@ use super::Url;
 
 pub type CanteenID = i32;
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Canteen {
     pub id: CanteenID,
     pub name: String,
@@ -15,7 +15,7 @@ pub struct Canteen {
     pub menu: Option<Url>,
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, Hash)]
 pub struct CanteenDay {
     pub date: String,
     pub closed: bool,

@@ -16,7 +16,7 @@ pub trait MensaStorage {
 
     fn list_meals(
         &self,
-        canteen: models::CanteenID,
+        canteen: open_mensa::CanteenID,
         day: NaiveDate,
     ) -> StorageResult<Vec<models::Meal>>;
     fn create_meal(&self, meal: models::Meal) -> StorageResult<models::Meal>;
