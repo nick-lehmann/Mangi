@@ -15,7 +15,7 @@ pub fn start_telegram_bot(token: String, open_mensa_client: &OpenMensaClient) {
     // Food
     let food_controller = commands::FoodController::new(&api, &open_mensa_client);
 
-    let canteen_list_handler = |update: Update| food_controller.list_food_by_canteen(update);
+    let canteen_list_handler = |message: Message| food_controller.list_food_by_canteen(message);
     dispatcher.register_command(
         "list".to_string(),
         "List all canteens 2".to_string(),
@@ -29,7 +29,7 @@ pub fn start_telegram_bot(token: String, open_mensa_client: &OpenMensaClient) {
     // User settings
     let user_settings_controller = UserSettingsController::new(&api);
 
-    let user_settings_list_handler = |update: Update| user_settings_controller.list(update);
+    let user_settings_list_handler = |message: Message| user_settings_controller.list(message);
     dispatcher.register_command(
         "settings".to_string(),
         "List user settings".to_string(),

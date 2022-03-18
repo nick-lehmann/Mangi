@@ -1,11 +1,13 @@
-use frankenstein::Update;
+use frankenstein::Message;
 use log::info;
 
 use crate::TelegramResult;
 
 use super::Dispatcher;
 
-pub type CommandHandler<'a> = &'a dyn Fn(Update) -> TelegramResult<()>;
+pub type CommandHandler<'a> = &'a dyn Fn(Message) -> TelegramResult<()>;
+// The name of a command without the leading slash
+pub type CommandName = String;
 
 #[derive(Clone)]
 pub struct Command<'a> {
@@ -24,32 +26,28 @@ impl<'a> Into<frankenstein::BotCommand> for Command<'a> {
 }
 
 pub trait CommandDispatcher<'a> {
-    fn register_command(
-        &mut self,
-        name: String,
-        description: String,
-        handler: &'a dyn Fn(Update) -> TelegramResult<()>,
-    );
-    fn handle_command(&self, update: Update);
+    fn command_from_message(&self, message: &Message) -> Option<CommandName>;
+    fn register_command(&mut self, name: String, description: String, handler: CommandHandler<'a>);
+    fn handle_command(&self, command: String, message: Message);
 }
 
 impl<'a> CommandDispatcher<'a> for Dispatcher<'a> {
-    fn handle_command(&self, update: Update) {
-        let message = &update.message.as_ref().unwrap();
-        let text = message.text.as_ref().unwrap();
-
+    fn command_from_message(&self, message: &Message) -> Option<CommandName> {
+        let text = message.text.as_ref()?;
         if !text.starts_with('/') {
-            return;
+            return None;
         }
 
-        let command_text = text[1..].to_string();
+        Some(text[1..].to_string())
+    }
 
+    fn handle_command(&self, command: CommandName, message: Message) {
         let command = self
             .commands
-            .get(&command_text)
-            .expect(&format!("No command for {} registered", command_text));
+            .get(&command)
+            .expect(&format!("No command for {} registered", command));
 
-        let _result = (command.handler)(update);
+        let _result = (command.handler)(message);
     }
 
     fn register_command(&mut self, name: String, description: String, handler: CommandHandler<'a>) {

@@ -1,4 +1,4 @@
-use frankenstein::{CallbackQuery, Message, Update};
+use frankenstein::CallbackQuery;
 use log::info;
 
 use crate::{Dispatcher, TelegramResult};
@@ -7,7 +7,7 @@ pub type CallbackHandler<'a> = &'a dyn Fn(CallbackQuery) -> TelegramResult<()>;
 
 pub trait CallbackDispatcher<'a> {
     fn register_callback(&mut self, pattern: String, handler: CallbackHandler<'a>);
-    fn handle_callback(&self, update: Update);
+    fn handle_callback(&self, callback_query: CallbackQuery);
 }
 
 impl<'a> CallbackDispatcher<'a> for Dispatcher<'a> {
@@ -16,8 +16,7 @@ impl<'a> CallbackDispatcher<'a> for Dispatcher<'a> {
         self.callbacks.insert(pattern, handler);
     }
 
-    fn handle_callback(&self, update: Update) {
-        let callback_query = update.callback_query.unwrap();
+    fn handle_callback(&self, callback_query: CallbackQuery) {
         let message = callback_query.message.as_ref().unwrap();
         let text = message.text.as_ref().unwrap().clone();
 

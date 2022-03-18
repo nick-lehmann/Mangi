@@ -43,9 +43,7 @@ impl<'a> FoodController<'a> {
             .collect()
     }
 
-    pub fn list_food_by_canteen(&self, update: Update) -> TelegramResult<()> {
-        let message = update.message.unwrap();
-
+    pub fn list_food_by_canteen(&self, message: Message) -> TelegramResult<()> {
         let inline_keyboard = ReplyMarkup::InlineKeyboardMarkup(InlineKeyboardMarkup {
             inline_keyboard: self.get_canteen_buttons(),
         });

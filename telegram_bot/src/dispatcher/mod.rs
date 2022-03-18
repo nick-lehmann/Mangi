@@ -29,14 +29,18 @@ impl<'a> Dispatcher<'a> {
     }
 
     pub fn dispatch(&self, update: Update) -> Result<(), &'static str> {
-        if (&update.callback_query).is_some() {
-            self.handle_callback(update);
+        if let Some(callback_query) = update.callback_query {
+            self.handle_callback(callback_query);
             return Ok(());
         }
 
-        if (&update.message).is_some() {
-            self.handle_command(update);
-            return Ok(());
+        if let Some(message) = update.message {
+            if let Some(command_name) = self.command_from_message(&message) {
+                self.handle_command(command_name, message);
+                return Ok(());
+            } else {
+                // TODO: Handle normal messages
+            }
         }
 
         Ok(())

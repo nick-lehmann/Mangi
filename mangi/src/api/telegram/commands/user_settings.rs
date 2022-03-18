@@ -1,6 +1,7 @@
 use std::fmt::Error;
 
 use frankenstein::Api;
+use frankenstein::Message;
 use frankenstein::SendMessageParamsBuilder;
 use frankenstein::TelegramApi;
 use frankenstein::Update;
@@ -16,9 +17,7 @@ impl<'a> UserSettingsController<'a> {
         Self { api }
     }
 
-    pub fn list(&self, update: Update) -> TelegramResult<()> {
-        let message = update.message.unwrap();
-
+    pub fn list(&self, message: Message) -> TelegramResult<()> {
         let from = message.from.unwrap();
 
         let send_message_params = SendMessageParamsBuilder::default()
