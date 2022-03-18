@@ -11,8 +11,8 @@ pub type CommandName = String;
 
 #[derive(Clone)]
 pub struct Command<'a> {
-    pub name: String,
-    pub description: String,
+    pub name: &'a str,
+    pub description: &'a str,
     handler: CommandHandler<'a>,
 }
 
@@ -27,7 +27,12 @@ impl<'a> Into<frankenstein::BotCommand> for Command<'a> {
 
 pub trait CommandDispatcher<'a> {
     fn command_from_message(&self, message: &Message) -> Option<CommandName>;
-    fn register_command(&mut self, name: String, description: String, handler: CommandHandler<'a>);
+    fn register_command(
+        &mut self,
+        name: &'a str,
+        description: &'a str,
+        handler: CommandHandler<'a>,
+    );
     fn handle_command(&self, command: String, message: Message);
 }
 
@@ -50,7 +55,12 @@ impl<'a> CommandDispatcher<'a> for Dispatcher<'a> {
         let _result = (command.handler)(message);
     }
 
-    fn register_command(&mut self, name: String, description: String, handler: CommandHandler<'a>) {
+    fn register_command(
+        &mut self,
+        name: &'a str,
+        description: &'a str,
+        handler: CommandHandler<'a>,
+    ) {
         info!("Register command {}", &name);
         self.commands.insert(
             name.to_owned(),

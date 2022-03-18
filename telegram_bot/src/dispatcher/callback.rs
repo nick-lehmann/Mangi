@@ -6,14 +6,14 @@ use crate::{Dispatcher, TelegramResult};
 pub type CallbackHandler<'a> = &'a dyn Fn(CallbackQuery) -> TelegramResult<()>;
 
 pub trait CallbackDispatcher<'a> {
-    fn register_callback(&mut self, pattern: String, handler: CallbackHandler<'a>);
+    fn register_callback(&mut self, pattern: &'a str, handler: CallbackHandler<'a>);
     fn handle_callback(&self, callback_query: CallbackQuery);
 }
 
 impl<'a> CallbackDispatcher<'a> for Dispatcher<'a> {
-    fn register_callback(&mut self, pattern: String, handler: CallbackHandler<'a>) {
+    fn register_callback(&mut self, pattern: &'a str, handler: CallbackHandler<'a>) {
         info!("Register callback handler for pattern {}", &pattern);
-        self.callbacks.insert(pattern, handler);
+        self.callbacks.insert(pattern.to_string(), handler);
     }
 
     fn handle_callback(&self, callback_query: CallbackQuery) {
