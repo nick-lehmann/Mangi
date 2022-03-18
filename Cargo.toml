@@ -2,5 +2,6 @@
 
 members = [
   "mangi",
-  "open_mensa"
+  "open_mensa",
+  "telegram_bot"
 ]

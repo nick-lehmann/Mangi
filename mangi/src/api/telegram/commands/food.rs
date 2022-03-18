@@ -1,9 +1,6 @@
-use crate::api::telegram::TelegramError;
-use crate::api::telegram::TelegramResult;
-
-use super::TelegramCommand;
 use chrono::NaiveDate;
 use frankenstein::Api;
+use frankenstein::CallbackQuery;
 use frankenstein::EditMessageTextParams;
 use frankenstein::EditMessageTextParamsBuilder;
 use frankenstein::InlineKeyboardButton;
@@ -16,13 +13,15 @@ use frankenstein::TelegramApi;
 use frankenstein::Update;
 use log::error;
 use open_mensa::OpenMensaClient;
+use telegram_bot::TelegramError;
+use telegram_bot::TelegramResult;
 
-pub struct FoodCommand<'a> {
+pub struct FoodController<'a> {
     api: &'a Api,
     open_mensa_client: &'a OpenMensaClient,
 }
 
-impl<'a> FoodCommand<'a> {
+impl<'a> FoodController<'a> {
     pub fn new(api: &'a frankenstein::Api, open_mensa_client: &'a OpenMensaClient) -> Self {
         Self {
             api,
@@ -43,18 +42,8 @@ impl<'a> FoodCommand<'a> {
             })
             .collect()
     }
-}
 
-impl<'a> TelegramCommand for FoodCommand<'a> {
-    fn name(&self) -> &'static str {
-        "list"
-    }
-
-    fn description(&self) -> &'static str {
-        "List all canteens"
-    }
-
-    fn execute(&self, update: Update) -> TelegramResult<()> {
+    pub fn list_food_by_canteen(&self, update: Update) -> TelegramResult<()> {
         let message = update.message.unwrap();
 
         let inline_keyboard = ReplyMarkup::InlineKeyboardMarkup(InlineKeyboardMarkup {
@@ -72,13 +61,12 @@ impl<'a> TelegramCommand for FoodCommand<'a> {
         Ok(())
     }
 
-    fn handle_callback(&self, update: &Update) -> TelegramResult<()> {
-        let callback_query = update.callback_query.as_ref().unwrap();
+    pub fn handle_callback(&self, callback_query: CallbackQuery) -> TelegramResult<()> {
         let data = callback_query.data.as_ref().unwrap();
 
         let meals = self
             .open_mensa_client
-            .get_meals(data.parse().unwrap(), NaiveDate::from_ymd(2022, 3, 10))
+            .get_meals(data.parse().unwrap(), NaiveDate::from_ymd(2022, 3, 17))
             .unwrap();
 
         let message = callback_query

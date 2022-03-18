@@ -26,28 +26,28 @@ pub fn main() {
 
     let open_mensa_client = OpenMensaClient::new(OpenMensaEndpoint::TUDresden);
 
-    let mensa = models::Mensa {
-        id: 1,
-        name: "TU Dresden".into(),
-    };
+    // let mensa = models::Mensa {
+    //     id: 1,
+    //     name: "TU Dresden".into(),
+    // };
 
-    let storage = MensaPostgresStorage::new(DbConfig {
-        host: "localhost".into(),
-        port: 5433,
-        user: "mangi".into(),
-        password: "mangi".into(),
-        database: "mangi".into(),
-    });
+    // let storage = MensaPostgresStorage::new(DbConfig {
+    //     host: "localhost".into(),
+    //     port: 5433,
+    //     user: "mangi".into(),
+    //     password: "mangi".into(),
+    //     database: "mangi".into(),
+    // });
 
-    let service = DefaultMensaService { storage: storage };
+    // let service = DefaultMensaService { storage: storage };
 
-    let meal_syncer = MealSync {
-        mensa: &mensa,
-        open_mensa_client: &open_mensa_client,
-        meal_service: &service,
-    };
+    // let meal_syncer = MealSync {
+    //     mensa: &mensa,
+    //     open_mensa_client: &open_mensa_client,
+    //     meal_service: &service,
+    // };
 
-    meal_syncer.sync(Some(NaiveDate::from_ymd(2022, 3, 9)));
+    // meal_syncer.sync(Some(NaiveDate::from_ymd(2022, 3, 9)));
 
-    // start_telegram_bot(token, &open_mensa_client);
+    start_telegram_bot(token, &open_mensa_client);
 }

@@ -1,34 +1,22 @@
 use std::fmt::Error;
 
-use crate::api::telegram::TelegramError;
-use crate::api::telegram::TelegramResult;
-
-use super::TelegramCommand;
 use frankenstein::Api;
 use frankenstein::SendMessageParamsBuilder;
 use frankenstein::TelegramApi;
 use frankenstein::Update;
+use telegram_bot::TelegramError;
+use telegram_bot::TelegramResult;
 
-pub struct ListUserSettingsCommand<'a> {
+pub struct UserSettingsController<'a> {
     api: &'a Api,
 }
 
-impl<'a> ListUserSettingsCommand<'a> {
+impl<'a> UserSettingsController<'a> {
     pub fn new(api: &'a frankenstein::Api) -> Self {
         Self { api }
     }
-}
 
-impl<'a> TelegramCommand for ListUserSettingsCommand<'a> {
-    fn name(&self) -> &'static str {
-        "settings"
-    }
-
-    fn description(&self) -> &'static str {
-        "Show user settings"
-    }
-
-    fn execute(&self, update: Update) -> TelegramResult<()> {
+    pub fn list(&self, update: Update) -> TelegramResult<()> {
         let message = update.message.unwrap();
 
         let from = message.from.unwrap();
@@ -41,9 +29,5 @@ impl<'a> TelegramCommand for ListUserSettingsCommand<'a> {
         self.api.send_message(&send_message_params)?;
 
         Ok(())
-    }
-
-    fn handle_callback(&self, _callback_query: &Update) -> TelegramResult<()> {
-        Err(TelegramError::NothingDone)
     }
 }

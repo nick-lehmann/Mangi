@@ -4,6 +4,7 @@ use frankenstein::{
 
 pub type TelegramResult<T> = Result<T, TelegramError>;
 
+#[derive(Debug)]
 pub enum TelegramError {
     ValueError(String),
     HttpError(HttpError),

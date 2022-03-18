@@ -1,3 +1,4 @@
+pub mod notes;
 mod service;
 
 use chrono::NaiveDate;

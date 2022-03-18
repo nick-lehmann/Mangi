@@ -1,19 +1,10 @@
 pub mod food;
-pub mod list_user_settings;
+pub mod user_settings;
 
-pub use food::FoodCommand;
-pub use list_user_settings::ListUserSettingsCommand;
+pub use food::FoodController;
+pub use user_settings::UserSettingsController;
 
 use frankenstein::{CallbackQuery, Update};
-
-use super::TelegramResult;
-
-pub trait TelegramCommand {
-    fn name(&self) -> &'static str;
-    fn description(&self) -> &'static str;
-    fn execute(&self, update: Update) -> TelegramResult<()>;
-    fn handle_callback(&self, update: &Update) -> TelegramResult<()>;
-}
 
 pub enum CommandError {
     CannotHandle,
