@@ -10,6 +10,7 @@
 	// "dockerFile": "Dockerfile",
   "dockerComposeFile": ["docker-compose.yml"],
   "service": "mangi",
+  "workspaceFolder": "/mangi",
 	"settings": {
 		"editor.formatOnSave": true,
 		"terminal.integrated.shell.linux": "/usr/bin/zsh",
