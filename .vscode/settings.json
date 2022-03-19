@@ -2,13 +2,13 @@
   "sqltools.connections": [
     {
       "previewLimit": 50,
-      "server": "localhost",
-      "port": 5433,
+      "server": "db",
+      "port": 5432,
       "driver": "PostgreSQL",
+      "name": "db",
       "database": "mangi",
       "username": "mangi",
-      "password": "mangi",
-      "name": "Mangi"
+      "password": "mangi"
     }
   ]
 }
