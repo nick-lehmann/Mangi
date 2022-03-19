@@ -1,0 +1,20 @@
+version: '3.1'
+
+services:
+  mangi:
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    command: tail -f /dev/null
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+  
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: mangi
+      POSTGRES_USER: mangi
+      POSTGRES_PASSWORD: mangi
+    ports:
+      - "5432:5432"

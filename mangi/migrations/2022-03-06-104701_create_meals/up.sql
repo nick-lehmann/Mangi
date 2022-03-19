@@ -27,3 +27,24 @@ CREATE TABLE meals (
   canteen INTEGER NOT NULL,
   constraint meals_canteen foreign key (canteen) references canteens (id)
 );
+
+CREATE TYPE user_type AS enum('student', 'employee');
+
+CREATE TYPE diet AS enum('omnivore', 'vegetarian', 'vegan');
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255), 
+  telegram_user_id INTEGER,
+  telegram_chat_id INTEGER,
+  user_type user_type NOT NULL  
+  diet diet NOT NULL, 
+);
+
+CREATE TABLE favorites (
+  user_id INTEGER,
+  canteen_id INTEGER,
+  
+  constraint favorites_user foreign key (user_id) references users (id),
+  constraint favorites_canteen foreign key (canteen_id) references canteens (id),
+);

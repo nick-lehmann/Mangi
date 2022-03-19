@@ -1,4 +1,4 @@
-pub mod notes;
+mod diet;
 mod service;
 
 use chrono::NaiveDate;

@@ -20,6 +20,8 @@ impl<'a> UserSettingsController<'a> {
     pub fn list(&self, message: Message) -> TelegramResult<()> {
         let from = message.from.unwrap();
 
+        println!("{:#?}", from);
+
         let send_message_params = SendMessageParamsBuilder::default()
             .chat_id(message.chat.id)
             .text(format!("Hello {}, your preferences are:", from.first_name))

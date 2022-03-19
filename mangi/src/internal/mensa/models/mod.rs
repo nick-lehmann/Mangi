@@ -1,5 +1,7 @@
 mod canteen;
 pub use canteen::{Canteen, CanteenDay};
+mod diet;
+pub use diet::Diet;
 mod meal;
 pub use meal::{Meal, MealPrices};
 mod mensa;

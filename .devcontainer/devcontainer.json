@@ -7,7 +7,8 @@
 		"serayuzgur.crates",
 		"vadimcn.vscode-lldb"
 	],
-	"dockerFile": "Dockerfile",
+	// "dockerFile": "Dockerfile",
+  "dockerComposeFile": ["docker-compose.yml"],
 	"settings": {
 		"editor.formatOnSave": true,
 		"terminal.integrated.shell.linux": "/usr/bin/zsh",
