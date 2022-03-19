@@ -1,11 +1,12 @@
-use open_mensa::CanteenID;
 use serde::{Deserialize, Serialize};
 
 use super::{MensaID, Url};
 
+pub type CanteenID = open_mensa::CanteenID;
+
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Canteen {
-    pub id: open_mensa::CanteenID,
+    pub id: CanteenID,
     pub name: String,
     pub city: String,
     pub address: String,

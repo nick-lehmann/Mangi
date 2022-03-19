@@ -1,5 +1,6 @@
 use crate::internal::mensa::models::Diet;
 
+#[allow(dead_code)]
 pub fn get_diet_from_tu_dresden(notes: &Vec<String>) -> Diet {
     for note in notes {
         if note == "Menü ist vegan" {

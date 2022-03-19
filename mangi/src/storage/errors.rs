@@ -1,15 +1,17 @@
 use std::num::ParseFloatError;
 
+pub type StorageResult<T> = Result<T, StorageError>;
+
 #[derive(Debug)]
 pub enum StorageError {
-    ParseError,
+    ParseError(String),
     ConnectionError(r2d2::Error),
     DatabaseError(diesel::result::Error),
 }
 
 impl From<ParseFloatError> for StorageError {
     fn from(_error: ParseFloatError) -> Self {
-        StorageError::ParseError
+        StorageError::ParseError("Unable to parse float".to_string())
     }
 }
 

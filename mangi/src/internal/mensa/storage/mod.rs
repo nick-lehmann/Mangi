@@ -1,12 +1,10 @@
 use chrono::NaiveDate;
 
+use crate::storage::StorageResult;
+
 use super::models;
 
-mod errors;
-pub use errors::StorageError;
 pub mod postgres;
-
-pub type StorageResult<T> = Result<T, StorageError>;
 
 pub trait MensaStorage {
     // fn create_mensa() -> StorageResult<Mensa>;

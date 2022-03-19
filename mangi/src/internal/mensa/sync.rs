@@ -7,13 +7,13 @@ use open_mensa;
 
 use super::service::MensaService;
 
-pub struct MealSync<'a, Service: MensaService> {
+pub struct MensaSync<'a, Service: MensaService> {
     pub mensa: &'a models::Mensa,
     pub open_mensa_client: &'a open_mensa::OpenMensaClient,
-    pub meal_service: &'a Service,
+    pub mensa_service: &'a Service,
 }
 
-impl<'a, Service: MensaService> MealSync<'a, Service> {
+impl<'a, Service: MensaService> MensaSync<'a, Service> {
     fn fetch_canteens(&self) -> Vec<models::Canteen> {
         self.open_mensa_client
             .get_canteens()
@@ -25,7 +25,7 @@ impl<'a, Service: MensaService> MealSync<'a, Service> {
 
     fn sync_canteens(&self) -> Vec<models::Canteen> {
         let canteens = self.fetch_canteens();
-        let stored_canteens = self.meal_service.get_canteens().unwrap();
+        let stored_canteens = self.mensa_service.get_canteens().unwrap();
 
         let canteen_set: HashSet<&models::Canteen> = canteens.iter().collect();
         let stored_canteen_set: HashSet<&models::Canteen> = stored_canteens.iter().collect();
@@ -38,7 +38,7 @@ impl<'a, Service: MensaService> MealSync<'a, Service> {
         );
 
         for new_canteen in new_canteens {
-            self.meal_service
+            self.mensa_service
                 .store_canteen(new_canteen.clone().clone())
                 .unwrap();
         }
@@ -51,7 +51,7 @@ impl<'a, Service: MensaService> MealSync<'a, Service> {
         debug!("Found {} meals for canteen {}", meals.len(), &canteen.name);
 
         for meal in meals {
-            self.meal_service
+            self.mensa_service
                 .store_meal(models::Meal::from_open_mensa(meal, canteen.id, date))
                 .unwrap();
         }

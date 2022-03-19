@@ -1,5 +1,5 @@
 mod canteen;
-pub use canteen::{Canteen, CanteenDay};
+pub use canteen::{Canteen, CanteenDay, CanteenID};
 mod diet;
 pub use diet::Diet;
 mod meal;
