@@ -9,6 +9,7 @@
 	],
 	// "dockerFile": "Dockerfile",
   "dockerComposeFile": ["docker-compose.yml"],
+  "service": "mangi",
 	"settings": {
 		"editor.formatOnSave": true,
 		"terminal.integrated.shell.linux": "/usr/bin/zsh",
