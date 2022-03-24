@@ -1,9 +1,11 @@
 use std::collections::HashSet;
 
-use crate::internal::mensa::models;
-use chrono::{NaiveDate, Utc};
-use log::{debug, info, log, Level};
-use open_mensa;
+use {
+    crate::internal::mensa::models,
+    chrono::{NaiveDate, Utc},
+    log::{debug, info, log, Level},
+    open_mensa,
+};
 
 use super::service::MensaService;
 

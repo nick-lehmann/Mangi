@@ -1,16 +1,22 @@
 pub mod data;
 
-use diesel::r2d2::ConnectionManager;
-use diesel::QueryDsl;
-use diesel::{PgConnection, RunQueryDsl};
-use log::debug;
-use r2d2::Pool;
+use {
+    diesel::{r2d2::ConnectionManager, PgConnection, QueryDsl, RunQueryDsl},
+    log::debug,
+    r2d2::Pool,
+};
 
-use crate::config::PgPool;
-use crate::internal::mensa::models;
-use crate::internal::mensa::storage::{MensaStorage, StorageResult};
-use crate::storage::schema::canteens::{all_columns as all_canteen_columns, dsl as canteens};
-use crate::storage::schema::meals::{all_columns as all_meal_columns, dsl as meals};
+use crate::{
+    config::PgPool,
+    internal::mensa::{
+        models,
+        storage::{MensaStorage, StorageResult},
+    },
+    storage::schema::{
+        canteens::{all_columns as all_canteen_columns, dsl as canteens},
+        meals::{all_columns as all_meal_columns, dsl as meals},
+    },
+};
 
 pub struct PostgresMensaStorage<'a> {
     pool: &'a PgPool,

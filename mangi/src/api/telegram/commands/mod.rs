@@ -1,13 +1,6 @@
-pub mod food;
-pub mod user_settings;
-
+mod food;
 pub use food::FoodController;
+mod user_settings;
 pub use user_settings::UserSettingsController;
-
-use frankenstein::{CallbackQuery, Update};
-
-pub enum CommandError {
-    CannotHandle,
-}
-
-pub type CommandResult<T> = Result<T, CommandError>;
+mod welcome;
+pub use welcome::WelcomeController;

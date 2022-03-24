@@ -1,5 +1,7 @@
-use diesel::{r2d2::ConnectionManager, PgConnection};
-use r2d2::Pool;
+use {
+    diesel::{r2d2::ConnectionManager, PgConnection},
+    r2d2::Pool,
+};
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 

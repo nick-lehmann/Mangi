@@ -1,13 +1,14 @@
 mod mensas;
 mod models;
 
+use log::error;
 pub use mensas::OpenMensaEndpoint;
 pub use models::{Canteen, CanteenDay, CanteenID, Meal, MealID, MealPrices};
 
 use chrono::NaiveDate;
-use ureq::Error;
 
-pub type ClientResult<T> = Result<T, Error>;
+pub type ClientError = ureq::Error;
+pub type ClientResult<T> = Result<T, ClientError>;
 
 pub struct OpenMensaClient {
     base_url: String,
@@ -61,8 +62,7 @@ impl OpenMensaClient {
             Ok(x) => Ok(x),
             Err(err) => {
                 let path = err.path().to_string();
-                println!("Path of error: {}", path);
-                println!("{}", err);
+                error!("Path of error: {}, {}j", path, err);
                 Ok(vec![])
             }
         }

@@ -1,4 +1,6 @@
-#[derive(Debug, Clone, PartialEq)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum UserType {
     Student,
     Employee,
@@ -10,8 +12,8 @@ impl TryFrom<String> for UserType {
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
         match value.as_str() {
-            "student" => Ok(UserType::Student),
-            "employee" => Ok(UserType::Employee),
+            "Student" => Ok(UserType::Student),
+            "Angestellter" => Ok(UserType::Employee),
             _ => Err(format!("Unable to convert {} into a user type", value)),
         }
     }
@@ -20,8 +22,8 @@ impl TryFrom<String> for UserType {
 impl Into<String> for UserType {
     fn into(self) -> String {
         match self {
-            UserType::Student => "student",
-            UserType::Employee => "employee",
+            UserType::Student => "Student",
+            UserType::Employee => "Angestellter",
         }
         .to_string()
     }

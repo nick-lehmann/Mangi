@@ -1,7 +1,6 @@
 use open_mensa::CanteenID;
 
-use crate::internal::mensa::models;
-use crate::internal::mensa::storage::MensaStorage;
+use crate::internal::mensa::{models, storage::MensaStorage};
 
 use super::MensaService;
 

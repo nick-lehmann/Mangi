@@ -3,8 +3,6 @@ name = "mangi"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 futures = "0.3.21"
 tokio = { version = "1.17.0", features = ["full"] }
@@ -25,3 +23,5 @@ log = "0.4.14"
 open_mensa = { path = "../open_mensa" }
 telegram_bot = { path = "../telegram_bot" }
 diesel-derive-enum = { version = "1.1.2", features = ["postgres"] }
+thiserror = "1.0.30"
+anyhow = "1.0.56"

@@ -1,5 +1,4 @@
-use crate::internal::mensa::models::CanteenID;
-use crate::storage::schema::favorites;
+use crate::{internal::mensa::models::CanteenID, storage::schema::favorites};
 
 use super::user::UserID;
 

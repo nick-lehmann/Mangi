@@ -1,12 +1,8 @@
 use std::fmt::Error;
 
-use frankenstein::Api;
-use frankenstein::Message;
-use frankenstein::SendMessageParamsBuilder;
-use frankenstein::TelegramApi;
-use frankenstein::Update;
-use telegram_bot::TelegramError;
-use telegram_bot::TelegramResult;
+use frankenstein::{Api, Message, SendMessageParamsBuilder, TelegramApi, Update};
+
+use crate::api::telegram::errors::{MangiCommandResult, MangiTelegramError};
 
 pub struct UserSettingsController<'a> {
     api: &'a Api,
@@ -17,17 +13,17 @@ impl<'a> UserSettingsController<'a> {
         Self { api }
     }
 
-    pub fn list(&self, message: Message) -> TelegramResult<()> {
-        let from = message.from.unwrap();
+    pub fn list(&self, message: Message) -> MangiCommandResult {
+        let from = message.from.ok_or(MangiTelegramError::Unrecoverable(
+            "Message has no user attached to it".into(),
+        ))?;
 
-        println!("{:#?}", from);
-
-        let send_message_params = SendMessageParamsBuilder::default()
-            .chat_id(message.chat.id)
-            .text(format!("Hello {}, your preferences are:", from.first_name))
-            .build()?;
-
-        self.api.send_message(&send_message_params)?;
+        self.api.send_message(
+            &SendMessageParamsBuilder::default()
+                .chat_id(message.chat.id)
+                .text(format!("Hello {}, your preferences are:", from.first_name))
+                .build()?,
+        )?;
 
         Ok(())
     }

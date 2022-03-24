@@ -7,18 +7,21 @@ use frankenstein::TelegramApi;
 use log::error;
 use log::info;
 
+use crate::errors::AsTelegramBotError;
 use crate::Dispatcher;
 
-pub struct TelegramBot<'a> {
+pub struct TelegramBot<'a, Error: AsTelegramBotError + Clone> {
     api: &'a Api,
-    pub dispatcher: Dispatcher<'a>,
+    pub dispatcher: Dispatcher<'a, Error>,
+    error_handler: fn(api: &Api, error: Error),
 }
 
-impl<'a> TelegramBot<'a> {
-    pub fn new(api: &'a Api) -> Self {
+impl<'a, Error: AsTelegramBotError + Clone> TelegramBot<'a, Error> {
+    pub fn new(api: &'a Api, error_handler: fn(api: &Api, error: Error)) -> Self {
         Self {
             api,
             dispatcher: Dispatcher::new(),
+            error_handler,
         }
     }
 
@@ -79,9 +82,9 @@ impl<'a> TelegramBot<'a> {
             for update in response.result {
                 let update_id = update.update_id;
 
-                self.dispatcher
-                    .dispatch(update)
-                    .expect("Unable to dispatch event");
+                if let Err(error) = self.dispatcher.dispatch(update) {
+                    (self.error_handler)(self.api, error)
+                }
 
                 offset = Some(update_id + 1);
             }

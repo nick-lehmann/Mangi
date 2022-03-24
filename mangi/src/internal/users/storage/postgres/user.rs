@@ -1,8 +1,12 @@
-use super::super::enums::{Diet, UserType};
-use crate::storage::schema::users;
-use crate::{internal::users::models, storage::StorageError};
-use diesel::{Insertable, Queryable};
-use telegram_bot::TelegramUserID;
+use {
+    super::super::enums::{Diet, UserType},
+    crate::{
+        internal::users::models,
+        storage::{schema::users, StorageError},
+    },
+    diesel::{Insertable, Queryable},
+    telegram_bot::TelegramUserID,
+};
 
 pub type UserID = i32;
 
@@ -13,8 +17,8 @@ pub struct User {
     pub name: String,
     pub telegram_user_id: UserID,
     pub telegram_chat_id: i32,
-    pub diet: String,
     pub user_type: String,
+    pub diet: String,
 }
 
 impl TryFrom<models::User> for User {
@@ -45,12 +49,12 @@ impl TryInto<models::User> for User {
             user_type: self
                 .user_type
                 .try_into()
-                .map_err(|err| StorageError::ParseError(err))?,
+                .map_err(|err| StorageError::ValidationError(err))?,
             favorite_canteens: vec![],
             diet: self
                 .diet
                 .try_into()
-                .map_err(|err| StorageError::ParseError(err))?,
+                .map_err(|err| StorageError::ValidationError(err))?,
         })
     }
 }

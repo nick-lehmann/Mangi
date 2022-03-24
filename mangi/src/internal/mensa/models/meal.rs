@@ -1,6 +1,8 @@
-use chrono::NaiveDate;
-use open_mensa;
-use serde::{self, Deserialize, Serialize};
+use {
+    chrono::NaiveDate,
+    open_mensa,
+    serde::{self, Deserialize, Serialize},
+};
 
 use super::Url;
 extern crate serde_derive;

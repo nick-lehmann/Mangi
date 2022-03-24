@@ -65,10 +65,4 @@ joinable!(favorites -> canteens (canteen_id));
 joinable!(favorites -> users (user_id));
 joinable!(meals -> canteens (canteen));
 
-allow_tables_to_appear_in_same_query!(
-    canteens,
-    favorites,
-    meals,
-    mensa,
-    users,
-);
+allow_tables_to_appear_in_same_query!(canteens, favorites, meals, mensa, users,);

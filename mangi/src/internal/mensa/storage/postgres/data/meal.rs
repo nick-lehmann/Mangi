@@ -1,9 +1,12 @@
-use chrono::NaiveDate;
-use open_mensa::{CanteenID, MealID};
+use {
+    chrono::NaiveDate,
+    open_mensa::{CanteenID, MealID},
+};
 
-use crate::internal::mensa::models;
-use crate::storage::StorageError;
-use crate::storage::schema::meals;
+use crate::{
+    internal::mensa::models,
+    storage::{schema::meals, StorageError},
+};
 
 type CommaSeparatedList = String;
 

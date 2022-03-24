@@ -8,19 +8,23 @@ use std::collections::HashMap;
 
 use frankenstein::Update;
 
+use crate::errors::AsTelegramBotError;
+
 use self::command::Command;
 
 /// Accepts an update from the telegram api and dispatches it to one of the preregistered handlers.
-pub struct Dispatcher<'a> {
-    commands: HashMap<String, command::Command<'a>>,
-    callbacks: HashMap<String, callback::CallbackHandler<'a>>,
+pub struct Dispatcher<'a, Error: AsTelegramBotError + Clone> {
+    commands: HashMap<String, command::Command<'a, Error>>,
+    callbacks: HashMap<String, callback::CallbackHandler<'a, Error>>,
 }
 
-pub trait GeneralDispatcher<'a>: CommandDispatcher<'a> + CallbackDispatcher<'a> {
+pub trait GeneralDispatcher<'a, Error: AsTelegramBotError>:
+    CommandDispatcher<'a, Error> + CallbackDispatcher<'a, Error>
+{
     fn dispatch(&self, update: Update) -> Result<(), &'static str>;
 }
 
-impl<'a> Dispatcher<'a> {
+impl<'a, Error: AsTelegramBotError + Clone> Dispatcher<'a, Error> {
     pub fn new() -> Self {
         Self {
             commands: HashMap::new(),
@@ -28,15 +32,15 @@ impl<'a> Dispatcher<'a> {
         }
     }
 
-    pub fn dispatch(&self, update: Update) -> Result<(), &'static str> {
+    pub fn dispatch(&self, update: Update) -> Result<(), Error> {
         if let Some(callback_query) = update.callback_query {
-            self.handle_callback(callback_query);
+            self.handle_callback(callback_query)?;
             return Ok(());
         }
 
         if let Some(message) = update.message {
             if let Some(command_name) = self.command_from_message(&message) {
-                self.handle_command(command_name, message);
+                self.handle_command(command_name, message)?;
                 return Ok(());
             } else {
                 // TODO: Handle normal messages
@@ -47,7 +51,7 @@ impl<'a> Dispatcher<'a> {
     }
 
     // TODO: Return some form of iterator instead
-    pub fn get_commands(&self) -> Vec<Command> {
+    pub fn get_commands(&self) -> Vec<Command<Error>> {
         self.commands
             .values()
             .map(|command| command.clone())

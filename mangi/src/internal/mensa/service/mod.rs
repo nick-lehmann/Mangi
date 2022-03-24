@@ -1,8 +1,7 @@
 mod diet;
 mod service;
 
-use chrono::NaiveDate;
-use open_mensa::CanteenID;
+use {chrono::NaiveDate, open_mensa::CanteenID};
 
 use super::models;
 pub use service::DefaultMensaService;

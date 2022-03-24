@@ -1,32 +1,9 @@
-use frankenstein::{
-    api::Error as FrankensteinError, ErrorResponse, HttpError, SendMessageParamsBuilderError,
-};
-
-pub type TelegramResult<T> = Result<T, TelegramError>;
-
-#[derive(Debug)]
-pub enum TelegramError {
-    ValueError(String),
-    HttpError(HttpError),
-    ApiError(ErrorResponse),
-    DecodeError(String),
-    EncodeError(String),
-    NothingDone,
+pub enum TelegramBotError {
+    InputError(String),
+    Unrecoverable(String),
+    Retry(String),
 }
 
-impl From<FrankensteinError> for TelegramError {
-    fn from(error: FrankensteinError) -> Self {
-        match error {
-            FrankensteinError::HttpError(err) => TelegramError::HttpError(err),
-            FrankensteinError::ApiError(error_response) => TelegramError::ApiError(error_response),
-            FrankensteinError::DecodeError(_) => todo!(),
-            FrankensteinError::EncodeError(_) => todo!(),
-        }
-    }
-}
-
-impl From<SendMessageParamsBuilderError> for TelegramError {
-    fn from(error: SendMessageParamsBuilderError) -> Self {
-        TelegramError::ValueError(error.to_string())
-    }
+pub trait AsTelegramBotError {
+    fn as_error() -> TelegramBotError;
 }

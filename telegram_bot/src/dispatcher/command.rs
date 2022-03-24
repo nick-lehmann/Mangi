@@ -1,22 +1,22 @@
 use frankenstein::Message;
 use log::info;
 
-use crate::TelegramResult;
+use crate::errors::AsTelegramBotError;
 
 use super::Dispatcher;
 
-pub type CommandHandler<'a> = &'a dyn Fn(Message) -> TelegramResult<()>;
+pub type CommandHandler<'a, Error> = &'a dyn Fn(Message) -> Result<(), Error>;
 // The name of a command without the leading slash
 pub type CommandName = String;
 
 #[derive(Clone)]
-pub struct Command<'a> {
+pub struct Command<'a, Error: AsTelegramBotError + Clone> {
     pub name: &'a str,
     pub description: &'a str,
-    handler: CommandHandler<'a>,
+    handler: CommandHandler<'a, Error>,
 }
 
-impl<'a> Into<frankenstein::BotCommand> for Command<'a> {
+impl<'a, Error: AsTelegramBotError + Clone> Into<frankenstein::BotCommand> for Command<'a, Error> {
     fn into(self) -> frankenstein::BotCommand {
         frankenstein::BotCommand {
             command: self.name.to_owned(),
@@ -25,18 +25,18 @@ impl<'a> Into<frankenstein::BotCommand> for Command<'a> {
     }
 }
 
-pub trait CommandDispatcher<'a> {
+pub trait CommandDispatcher<'a, Error: AsTelegramBotError> {
     fn command_from_message(&self, message: &Message) -> Option<CommandName>;
     fn register_command(
         &mut self,
         name: &'a str,
         description: &'a str,
-        handler: CommandHandler<'a>,
+        handler: CommandHandler<'a, Error>,
     );
-    fn handle_command(&self, command: String, message: Message);
+    fn handle_command(&self, command: String, message: Message) -> Result<(), Error>;
 }
 
-impl<'a> CommandDispatcher<'a> for Dispatcher<'a> {
+impl<'a, Error: AsTelegramBotError + Clone> CommandDispatcher<'a, Error> for Dispatcher<'a, Error> {
     fn command_from_message(&self, message: &Message) -> Option<CommandName> {
         let text = message.text.as_ref()?;
         if !text.starts_with('/') {
@@ -46,20 +46,21 @@ impl<'a> CommandDispatcher<'a> for Dispatcher<'a> {
         Some(text[1..].to_string())
     }
 
-    fn handle_command(&self, command: CommandName, message: Message) {
+    fn handle_command(&self, command: CommandName, message: Message) -> Result<(), Error> {
         let command = self
             .commands
             .get(&command)
             .expect(&format!("No command for {} registered", command));
 
-        let _result = (command.handler)(message);
+        (command.handler)(message)?;
+        Ok(())
     }
 
     fn register_command(
         &mut self,
         name: &'a str,
         description: &'a str,
-        handler: CommandHandler<'a>,
+        handler: CommandHandler<'a, Error>,
     ) {
         info!("Register command {}", &name);
         self.commands.insert(

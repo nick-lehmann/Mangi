@@ -1,14 +1,17 @@
-use diesel::BoolExpressionMethods;
-use diesel::QueryDsl;
+use {
+    diesel::{
+        query_dsl::select_dsl::SelectDsl,
+        result::{Error as DieselError, QueryResult as DieselResult},
+        BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl,
+    },
+    log::debug,
+};
 
-use crate::config::PgPool;
-use crate::diesel::query_dsl::select_dsl::SelectDsl;
-use crate::diesel::ExpressionMethods;
-use crate::diesel::RunQueryDsl;
-use crate::internal::mensa::models as mensa_models;
-use crate::internal::users::models;
-use crate::storage::schema;
-use crate::storage::StorageResult;
+use crate::{
+    config::PgPool,
+    internal::{mensa::models as mensa_models, users::models},
+    storage::{schema, StorageResult},
+};
 
 use super::UserStorage;
 
@@ -37,12 +40,18 @@ impl<'a> UserStorage for PostgresUserStorage<'a> {
         Ok(users)
     }
 
-    fn get_user(&self, id: models::UserID) -> StorageResult<models::User> {
-        let user: user::User = schema::users::dsl::users
+    fn get_user(&self, id: models::UserID) -> StorageResult<Option<models::User>> {
+        let user: DieselResult<user::User> = schema::users::dsl::users
             .filter(schema::users::dsl::id.eq(id))
-            .first(&self.pool.get()?)?;
+            .first(&self.pool.get()?);
 
-        user.try_into()
+        match user {
+            Ok(user) => Ok(Some(user.try_into()?)),
+            Err(err) => match err {
+                DieselError::NotFound => Ok(None),
+                _ => Err(err.into()),
+            },
+        }
     }
 
     fn get_telegram_user(&self, id: telegram_bot::TelegramUserID) -> StorageResult<models::User> {
@@ -59,6 +68,8 @@ impl<'a> UserStorage for PostgresUserStorage<'a> {
         let user: user::User = diesel::insert_into(schema::users::dsl::users)
             .values(user_input)
             .get_result(&self.pool.get()?)?;
+
+        debug!("Created user: {:?}", &user);
 
         user.try_into()
     }
@@ -121,9 +132,11 @@ impl<'a> UserStorage for PostgresUserStorage<'a> {
         canteen_id: mensa_models::CanteenID,
     ) -> StorageResult<()> {
         diesel::delete(
-            schema::favorites::dsl::favorites.filter(schema::favorites::dsl::canteen_id
-                .eq(canteen_id)
-                .and(schema::favorites::dsl::user_id.eq(user_id),)),
+            schema::favorites::dsl::favorites.filter(
+                schema::favorites::dsl::canteen_id
+                    .eq(canteen_id)
+                    .and(schema::favorites::dsl::user_id.eq(user_id)),
+            ),
         )
         .execute(&self.pool.get()?)?;
 

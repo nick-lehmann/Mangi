@@ -1,6 +1,4 @@
-use frankenstein::ChatId;
-use open_mensa::CanteenID;
-use telegram_bot::TelegramUserID;
+use {frankenstein::ChatId, open_mensa::CanteenID, telegram_bot::TelegramUserID};
 
 use crate::internal::mensa::models::Diet;
 

@@ -27,7 +27,7 @@ CREATE TABLE users (
   name VARCHAR(255) NOT NULL,
   telegram_user_id INTEGER NOT NULL,
   telegram_chat_id INTEGER NOT NULL,
-  user_type VARCHAR(10) NOT NULL,
+  user_type VARCHAR(20) NOT NULL,
   diet VARCHAR(10) NOT NULL
 );
 CREATE TABLE favorites (

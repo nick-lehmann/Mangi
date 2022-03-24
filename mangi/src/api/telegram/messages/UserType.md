@@ -1,0 +1,1 @@
+Bist du ein Student oder ein Beschäftigter? Entsprechender deiner Auswahl werden dir andere Preise angezeigt.

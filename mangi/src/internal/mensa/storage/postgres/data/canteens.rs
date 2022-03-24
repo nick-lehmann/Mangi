@@ -1,7 +1,9 @@
 use open_mensa::CanteenID;
 
-use crate::internal::mensa::models::{self, Url};
-use crate::storage::schema::canteens;
+use crate::{
+    internal::mensa::models::{self, Url},
+    storage::schema::canteens,
+};
 
 #[derive(Queryable, Insertable, Debug)]
 #[table_name = "canteens"]

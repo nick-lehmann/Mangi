@@ -1,6 +1,7 @@
-use crate::internal::mensa::models as mensa_models;
-use crate::internal::users::models;
-use diesel_derive_enum::DbEnum;
+use {
+    crate::internal::{mensa::models as mensa_models, users::models},
+    diesel_derive_enum::DbEnum,
+};
 
 #[derive(Debug, DbEnum, PartialEq)]
 pub enum UserType {
