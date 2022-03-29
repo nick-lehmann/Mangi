@@ -1,12 +1,10 @@
 use std::{fs, io};
 
-use {
-    chrono::Utc,
-    frankenstein::{Api, CallbackQuery, Message, Update},
-    log::info,
-    open_mensa::OpenMensaClient,
-    telegram_bot::{AsTelegramBotError, CallbackDispatcher, CommandDispatcher, TelegramBot},
-};
+use chrono::Utc;
+use frankenstein::{Api, CallbackQuery, Message, Update};
+use log::info;
+use open_mensa::OpenMensaClient;
+use telegram_bot::{AsTelegramBotError, CallbackDispatcher, CommandDispatcher, TelegramBot};
 
 use crate::internal::users::service::UserService;
 
@@ -18,8 +16,8 @@ mod helpers;
 mod messages;
 use messages::mangi_messages;
 
-fn error_handler(_api: &Api, _error: errors::MangiTelegramError) {
-    todo!()
+fn error_handler(_api: &Api, error: errors::MangiTelegramError) {
+    log::error!("Error: {:?}", error)
 }
 
 pub fn start_telegram_bot<UserServiceImpl>(

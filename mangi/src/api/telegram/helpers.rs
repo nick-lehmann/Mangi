@@ -5,7 +5,7 @@ use crate::internal::{mensa::models::Diet, users::models::UserType};
 
 use super::errors::MangiTelegramError;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct TemporaryUser {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub user_type: Option<UserType>,

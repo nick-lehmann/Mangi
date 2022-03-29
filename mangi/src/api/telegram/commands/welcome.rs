@@ -4,7 +4,7 @@ use frankenstein::{
     Api, CallbackQuery, InlineKeyboardButton, InlineKeyboardButtonBuilder, InlineKeyboardMarkup,
     Message, ReplyMarkup, SendMessageParamsBuilder, TelegramApi,
 };
-use log::debug;
+use log::{debug, info};
 use serde::{Deserialize, Serialize};
 use telegram_bot::TelegramUserID;
 
@@ -76,7 +76,7 @@ impl<'a, Service: UserService> WelcomeController<'a, Service> {
         self.api.send_message(
             &SendMessageParamsBuilder::default()
                 .chat_id(message.chat.id)
-                .text(mangi_messages.diet)
+                .text(mangi_messages.user_type)
                 .reply_markup(ReplyMarkup::InlineKeyboardMarkup(
                     self.user_type_keyboard()?,
                 ))
@@ -110,6 +110,8 @@ impl<'a, Service: UserService> WelcomeController<'a, Service> {
                     let mut user = temporay_user.clone();
                     user.diet = Some(diet);
                     let payload: String = user.into();
+
+                    debug!("Sending diet with payload {}", payload);
 
                     InlineKeyboardButtonBuilder::default()
                         .text(&diet_text)
@@ -151,23 +153,24 @@ impl<'a, Service: UserService> WelcomeController<'a, Service> {
             .ok_or(MangiTelegramError::Unrecoverable(
                 "Callback has no message".into(),
             ))?;
-        let telegram_user = message.from.ok_or(MangiTelegramError::Unrecoverable(
-            "Message has no user attached to it".into(),
-        ))?;
 
-        self.finish_registration(message.chat.id, telegram_user, temporary_user)
+        info!("Accepted diet select: {:?}", &message);
+
+        self.finish_registration(message.chat.id, message.chat, temporary_user)
     }
 
     fn finish_registration(
         &self,
         chat_id: i64,
-        telegram_user: frankenstein::User,
+        telegram_chat: frankenstein::Chat,
         temporary_user: TemporaryUser,
     ) -> MangiTelegramResult<()> {
+        info!("Finished registration {:?}", &telegram_chat);
+
         let user = user_models::User {
             id: 1,
-            name: telegram_user.first_name,
-            telegram_user_id: Some(telegram_user.id),
+            name: telegram_chat.first_name.unwrap(),
+            telegram_user_id: Some(telegram_chat.id as u64),
             telegram_chat_id: chat_id as i32,
             diet: temporary_user.diet.ok_or(MangiTelegramError::InputError(
                 "Missing diet in registration callback".into(),
@@ -195,5 +198,23 @@ impl<'a, Service: UserService> WelcomeController<'a, Service> {
         )?;
 
         Ok(())
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn temporary_user_serialisation() {
+        let user = TemporaryUser {
+            user_type: Some(UserType::Student),
+            diet: None,
+        };
+
+        let payload: String = user.clone().into();
+
+        let callback_data: TemporaryUser = Some(payload).try_into().unwrap();
+
+        assert_eq!(callback_data, user)
     }
 }
