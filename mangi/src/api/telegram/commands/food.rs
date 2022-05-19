@@ -1,5 +1,5 @@
 use anyhow::Context;
-use chrono::NaiveDate;
+use chrono::{NaiveDate, Utc};
 use frankenstein::{
     Api, CallbackQuery, DeleteMessageParams, DeleteMessageParamsBuilder, EditMessageTextParams,
     EditMessageTextParamsBuilder, InlineKeyboardButton, InlineKeyboardButtonBuilder,
@@ -10,19 +10,25 @@ use open_mensa::{Meal, OpenMensaClient};
 
 use crate::{
     api::telegram::errors::{MangiCommandResult, MangiTelegramError, MangiTelegramResult},
-    internal::mensa::models,
+    internal::mensa::{models, service::MensaService},
 };
 
-pub struct FoodController<'a> {
+pub struct FoodController<'a, Service: MensaService> {
     api: &'a Api,
     open_mensa_client: &'a OpenMensaClient,
+    service: &'a Service,
 }
 
-impl<'a> FoodController<'a> {
-    pub fn new(api: &'a frankenstein::Api, open_mensa_client: &'a OpenMensaClient) -> Self {
+impl<'a, Service: MensaService> FoodController<'a, Service> {
+    pub fn new(
+        api: &'a frankenstein::Api,
+        open_mensa_client: &'a OpenMensaClient,
+        service: &'a Service,
+    ) -> Self {
         Self {
             api,
             open_mensa_client,
+            service,
         }
     }
 
@@ -44,11 +50,19 @@ impl<'a> FoodController<'a> {
     /// Sends a list of meals in the specified chat.
     ///
     /// Provides a nice message if the list of meals is empty.
-    fn send_meals(&self, meals: &Vec<Meal>, chat_id: i64) -> MangiCommandResult {
+    fn send_meals(
+        &self,
+        canteen_name: String,
+        meals: &Vec<Meal>,
+        chat_id: i64,
+    ) -> MangiCommandResult {
         let text = if meals.len() == 0 {
-            "Leider gibt es keine Gerichte in der Kantine"
+            format!(
+                "Leider gibt es keine Gerichte in der Kantine \"{}\"",
+                canteen_name
+            )
         } else {
-            "Hier sind deine Gerichte"
+            format!("Hier sind deine Gerichte für die \"{}\"", canteen_name)
         };
 
         self.api.send_message(
@@ -88,9 +102,10 @@ impl<'a> FoodController<'a> {
 
     pub fn list_food_for_favorite(&self, message: Message, date: NaiveDate) -> MangiCommandResult {
         let favorite_canteen = 4;
+        let canteen = self.service.get_canteen(favorite_canteen).unwrap().unwrap();
         let meals = self.open_mensa_client.get_meals(favorite_canteen, date)?;
 
-        self.send_meals(&meals, message.chat.id)?;
+        self.send_meals(canteen.name, &meals, message.chat.id)?;
 
         Ok(())
     }
@@ -108,7 +123,9 @@ impl<'a> FoodController<'a> {
 
         let meals = self
             .open_mensa_client
-            .get_meals(canteen_id, NaiveDate::from_ymd(2022, 3, 17))?;
+            .get_meals(canteen_id, Utc::today().naive_local())?;
+
+        let canteen = self.service.get_canteen(canteen_id).unwrap().unwrap();
 
         let message = callback_query
             .message
@@ -122,7 +139,7 @@ impl<'a> FoodController<'a> {
                 .build()?,
         )?;
 
-        self.send_meals(&meals, message.chat.id)?;
+        self.send_meals(canteen.name, &meals, message.chat.id)?;
 
         Ok(())
     }

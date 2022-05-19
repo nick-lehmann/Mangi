@@ -6,7 +6,7 @@ use log::info;
 use open_mensa::OpenMensaClient;
 use telegram_bot::{AsTelegramBotError, CallbackDispatcher, CommandDispatcher, TelegramBot};
 
-use crate::internal::users::service::UserService;
+use crate::internal::{mensa::service::MensaService, users::service::UserService};
 
 use self::commands::UserSettingsController;
 
@@ -20,11 +20,13 @@ fn error_handler(_api: &Api, error: errors::MangiTelegramError) {
     log::error!("Error: {:?}", error)
 }
 
-pub fn start_telegram_bot<UserServiceImpl>(
+pub fn start_telegram_bot<UserServiceImpl, MensaServiceImpl>(
     token: String,
     open_mensa_client: &OpenMensaClient,
+    mensa_service: &MensaServiceImpl,
     user_service: &UserServiceImpl,
 ) where
+    MensaServiceImpl: MensaService,
     UserServiceImpl: UserService,
 {
     let api = frankenstein::Api::new(&token);
@@ -48,7 +50,7 @@ pub fn start_telegram_bot<UserServiceImpl>(
 
     // Food
     info!("Register food methods");
-    let food_controller = commands::FoodController::new(&api, &open_mensa_client);
+    let food_controller = commands::FoodController::new(&api, &open_mensa_client, mensa_service);
 
     let canteen_list_handler = |message: Message| food_controller.list_food_by_canteen(message);
     dispatcher.register_command(

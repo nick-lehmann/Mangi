@@ -9,6 +9,10 @@ pub struct DefaultMensaService<Storage: MensaStorage> {
 }
 
 impl<Storage: MensaStorage> MensaService for DefaultMensaService<Storage> {
+    fn get_canteen(&self, id: CanteenID) -> super::ServiceResult<Option<models::Canteen>> {
+        Ok(self.storage.get_canteen(id).unwrap())
+    }
+
     fn get_canteens(&self) -> super::ServiceResult<Vec<models::Canteen>> {
         Ok(self.storage.list_canteens().unwrap())
     }

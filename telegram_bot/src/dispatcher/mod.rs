@@ -18,13 +18,9 @@ pub struct Dispatcher<'a, Error: AsTelegramBotError + Clone> {
     callbacks: HashMap<String, callback::CallbackHandler<'a, Error>>,
 }
 
-pub trait GeneralDispatcher<'a, Error: AsTelegramBotError>:
-    CommandDispatcher<'a, Error> + CallbackDispatcher<'a, Error>
+impl<'a, Error: AsTelegramBotError + Clone + Send + Sync + std::error::Error>
+    Dispatcher<'a, Error>
 {
-    fn dispatch(&self, update: Update) -> Result<(), &'static str>;
-}
-
-impl<'a, Error: AsTelegramBotError + Clone> Dispatcher<'a, Error> {
     pub fn new() -> Self {
         Self {
             commands: HashMap::new(),

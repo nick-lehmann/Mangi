@@ -1,10 +1,11 @@
 pub mod data;
 
-use {
-    diesel::{r2d2::ConnectionManager, PgConnection, QueryDsl, RunQueryDsl},
-    log::debug,
-    r2d2::Pool,
+use diesel::{
+    r2d2::ConnectionManager, result::Error as DieselError, PgConnection, QueryDsl, RunQueryDsl,
 };
+use log::debug;
+use open_mensa::CanteenID;
+use r2d2::Pool;
 
 use crate::{
     config::PgPool,
@@ -29,6 +30,21 @@ impl<'a> PostgresMensaStorage<'a> {
 }
 
 impl<'a> MensaStorage for PostgresMensaStorage<'a> {
+    fn get_canteen(&self, id: CanteenID) -> StorageResult<Option<models::Canteen>> {
+        let connection = self.pool.get()?;
+
+        let result: Result<data::Canteen, DieselError> =
+            canteens::canteens.find(id).first(&connection);
+
+        match result {
+            Ok(canteen) => Ok(Some(canteen.into())),
+            Err(err) => match err {
+                DieselError::NotFound => Ok(None),
+                _ => Err(err.into()),
+            },
+        }
+    }
+
     fn list_canteens(&self) -> StorageResult<Vec<models::Canteen>> {
         let connection = self.pool.get()?;
 

@@ -1,7 +1,7 @@
 pub enum TelegramBotError {
-    InputError(String),
-    Unrecoverable(String),
-    Retry(String),
+    InputError(anyhow::Error),
+    Unrecoverable(anyhow::Error),
+    Retry(anyhow::Error),
 }
 
 pub trait AsTelegramBotError {

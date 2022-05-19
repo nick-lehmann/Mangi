@@ -10,8 +10,8 @@ pub trait CallbackDispatcher<'a, Error: AsTelegramBotError> {
     fn handle_callback(&self, callback_query: CallbackQuery) -> Result<(), Error>;
 }
 
-impl<'a, Error: AsTelegramBotError + Clone> CallbackDispatcher<'a, Error>
-    for Dispatcher<'a, Error>
+impl<'a, Error: std::error::Error + AsTelegramBotError + Clone + Send + Sync>
+    CallbackDispatcher<'a, Error> for Dispatcher<'a, Error>
 {
     fn register_callback(&mut self, pattern: &'a str, handler: CallbackHandler<'a, Error>) {
         info!("Register callback handler for pattern {}", &pattern);

@@ -1,14 +1,10 @@
-use frankenstein::Api;
-use frankenstein::GetUpdatesParams;
-use frankenstein::GetUpdatesParamsBuilder;
-use frankenstein::SetMyCommandsParamsBuilder;
-use frankenstein::TelegramApi;
+use frankenstein::{
+    Api, GetUpdatesParams, GetUpdatesParamsBuilder, SetMyCommandsParamsBuilder, TelegramApi,
+};
 
-use log::error;
-use log::info;
+use log::{error, info};
 
-use crate::errors::AsTelegramBotError;
-use crate::Dispatcher;
+use crate::{errors::AsTelegramBotError, Dispatcher};
 
 pub struct TelegramBot<'a, Error: AsTelegramBotError + Clone> {
     api: &'a Api,
@@ -16,7 +12,9 @@ pub struct TelegramBot<'a, Error: AsTelegramBotError + Clone> {
     error_handler: fn(api: &Api, error: Error),
 }
 
-impl<'a, Error: AsTelegramBotError + Clone> TelegramBot<'a, Error> {
+impl<'a, Error: AsTelegramBotError + Clone + Send + Sync + std::error::Error>
+    TelegramBot<'a, Error>
+{
     pub fn new(api: &'a Api, error_handler: fn(api: &Api, error: Error)) -> Self {
         Self {
             api,

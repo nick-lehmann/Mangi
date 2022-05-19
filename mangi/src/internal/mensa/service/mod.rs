@@ -1,7 +1,8 @@
 mod diet;
 mod service;
 
-use {chrono::NaiveDate, open_mensa::CanteenID};
+use chrono::NaiveDate;
+use open_mensa::CanteenID;
 
 use super::models;
 pub use service::DefaultMensaService;
@@ -12,6 +13,7 @@ pub enum ServiceError {}
 pub type ServiceResult<T> = Result<T, ServiceError>;
 
 pub trait MensaService {
+    fn get_canteen(&self, id: CanteenID) -> ServiceResult<Option<models::Canteen>>;
     fn get_canteens(&self) -> ServiceResult<Vec<models::Canteen>>;
     fn store_canteen(&self, canteen: models::Canteen) -> ServiceResult<()>;
     fn get_meals(&self, canteen_id: CanteenID, date: NaiveDate)
