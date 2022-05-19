@@ -1,0 +1,12 @@
+[package]
+name = "open_mensa"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.19"
+serde = "1.0.136"
+serde_json = "1.0.79"
+ureq = "2.4.0"
+serde_path_to_error = "0.1.7"
+log = "0.4.14"

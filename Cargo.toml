@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+  "mangi",
+  "open_mensa",
+  "telegram_bot"
+]
